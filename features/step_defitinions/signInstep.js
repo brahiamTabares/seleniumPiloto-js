@@ -2,24 +2,24 @@ const { When, Then, And, Given, Before, After, World} = require("@cucumber/cucum
 const { Builder } = require("selenium-webdriver");
 const assert = require("assert");
 const SignInPage = require('../../page/signin.page');
+const fs = require('fs');
+const Hook = require("./hook");
+const {Status} = require("cucumber");
 
 
    let signInPage;
    let driver;
 
    Before(async function () {
-    driver = await new Builder().forBrowser('chrome').build();
-    signInPage = new SignInPage(driver);
-    await signInPage.init();
-   });
-   After(async function () {
-
-        const timestamp = new Date().getTime();
-       await signInPage.driver.quit();
+       driver = Hook.getDriver();
+       signInPage = new SignInPage(driver);
 
    });
+
+
+
     Given('Ya estoy registrado en el sms', async function () {
-       await signInPage.visit('http://localhost:8080/')
+
     });
 
 
@@ -31,5 +31,8 @@ const SignInPage = require('../../page/signin.page');
 
 
     Then('Me muestra la pantalla principal del SMS-Builder y valido que se observe el sms', async function () {
-        await assert(signInPage.isHomePageDisplayed(),"no inicio sesion ")
+        const salirLocator= await signInPage.isDisplayed(signInPage.exitBtnLocator)
+        //await assert(signInPage.isHomePageDisplayed(),"no inicio sesion ")
+        assert.strictEqual(salirLocator,true);
+
     });

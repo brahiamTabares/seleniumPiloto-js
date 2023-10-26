@@ -3,8 +3,8 @@ const {Builder, By, ExpectedConditions, until} = require('selenium-webdriver');
 
 class BasePage {
     constructor(driver) {
-        this.driver = null;
-        this.ewait = null;
+        this.driver = driver;
+
 
         this.exitBtnLocator = By.xpath("//span[@class='ui-button-text ui-c' and text()='Salir']");
         this.menuLocator = By.xpath("//span[@class='ui-button-icon-left ui-icon ui-c pi pi-bars']");
@@ -13,13 +13,6 @@ class BasePage {
         this.titleSMSLocator = By.id("tituloApp");
     }
 
-
-    async init() {
-        this.driver = await new Builder().forBrowser('chrome').build();
-        this.ewait = (condition) => {
-            return this.driver.wait(condition);
-        };
-    }
 
    async findElement(locator) {
         return this.driver.findElement(locator);
@@ -38,9 +31,11 @@ class BasePage {
     }
 
     async type(inputText, locator) {
-        this.driver.findElement(locator).clear();
-        this.driver.findElement(locator).sendKeys(inputText);
-    }
+            const element = await this.findElement(locator);
+            await element.clear();
+            await element.sendKeys(inputText);
+        }
+
 
     async click(locator) {
         //const  element =this.ewait.until(until.elementIsClickable(locator));
@@ -66,14 +61,13 @@ class BasePage {
     }
 
     async getTitleSMS() {
-        await this.getEwait().until(ExpectedConditions.visibilityOfElementLocated(this.titleSMSLocator));
         return this.getText(this.titleSMSLocator);
     }
 
     async goStep(title) {
         const newStep = `//span[@class='ui-steps-title' and text()='${title}']`;
         console.log(newStep);
-        this.click(By.xpath(newStep));
+        await this.click(By.xpath(newStep));
     }
 }
 

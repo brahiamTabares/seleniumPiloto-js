@@ -1,6 +1,7 @@
 const { By, until } = require('selenium-webdriver');
 const BasePage = require('./base.page');
 
+
 class RegisterPage extends BasePage {
 
     constructor(driver) {
